@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, Switch, Modal, ScrollView, ActivityIndicator } from "react-native";
 import * as Logger from "./utils/logger";
+import * as updater from "./utils/updater";
 
 export default function Loading() {
     const [showLogs, setShowLogs] = useState(false);
     const [logs, setLogs] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
 
     Logger.getLogger().subscribe((logs) => {
         setLogs(logs.map((log) => `${log.timestamp}: ${log.message}`));
@@ -13,8 +15,35 @@ export default function Loading() {
     let logger = Logger.getLogger();
 
     useEffect(() => {
+        if(!loading) return;
         logger.log("Starting the app... 🚀");
         logger.log("Checking for updates...");
+        
+        const checkForUpdates = async () => {
+            const updateAvailable = await updater.checkForUpdates();
+            if (updateAvailable) {
+                logger.log("Update available, downloading...");
+                const downloadSuccess = await updater.downloadUpdate();
+                if (downloadSuccess) {
+                    logger.log("Update downloaded, applying...");
+                    await updater.applyUpdate();
+                } else {
+                    logger.log("Failed to download the update.");
+                }
+            } else {
+                logger.log("No updates available.");
+            }
+            setLoading(false);
+        };
+
+        checkForUpdates().then(() => {
+            setTimeout(() => {
+                logger.log("App started successfully.");
+                logger.log("Welcome to Neon! 🎉");
+            }, 2000);
+        });
+
+        setLoading(false);
     }, []);
 
     return (
@@ -82,15 +111,6 @@ const styles = StyleSheet.create({
         fontSize: 27,
         fontWeight: "bold",
     },
-    pulseText: {
-        animationName: {
-            "0%": { opacity: 0.4 },
-            "50%": { opacity: 1 },
-            "100%": { opacity: 0.4 },
-        },
-        animationDuration: "1.5s",
-        animationIterationCount: "infinite",
-    },
     loadingIndicator: {
         marginLeft: 5,
     },
@@ -115,6 +135,15 @@ const styles = StyleSheet.create({
         width: "50%",
         minHeight: 200,
         minWidth: "50%",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+
     },
     logText: {
         fontSize: 14,

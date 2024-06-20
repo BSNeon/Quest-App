@@ -31,7 +31,9 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/Mama-Regular.ttf"]
+          "fonts": [
+            "./assets/fonts/Mama-Regular.ttf"
+          ]
         }
       ]
     ],
@@ -40,6 +42,20 @@
     },
     "assets": [
       "./assets/fonts"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "532ffc3d-da77-4e3f-8707-fda72b2c0f72"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/532ffc3d-da77-4e3f-8707-fda72b2c0f72"
+    }
   }
 }
