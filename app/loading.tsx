@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, Switch, Modal, ScrollView, ActivityIndicator } from "react-native";
 import * as Logger from "./utils/logger";
 import * as updater from "./utils/updater";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Loading() {
     const [showLogs, setShowLogs] = useState(false);
@@ -13,6 +14,8 @@ export default function Loading() {
     });
 
     let logger = Logger.getLogger();
+
+    const navigation = useNavigation();
 
     useEffect(() => {
         if(!loading) return;
@@ -40,6 +43,10 @@ export default function Loading() {
             setTimeout(() => {
                 logger.log("App started successfully.");
                 logger.log("Welcome to Neon! 🎉");
+
+                setTimeout(() => {
+                    navigation.navigate("gameselection");
+                }, 500);
             }, 2000);
         });
 
